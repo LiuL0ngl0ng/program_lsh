@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>a_star_double_xml</name>
+  <version>0.1.0</version>
+  <description>
+
+     road publisher using a star method.
+
+  </description>
+  <maintainer email="ivrc@bit.edu.cn">IVRC</maintainer>
+  <author>IVRC</author>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>qt_build</depend>
+  <depend>roscpp</depend>
+  <depend>libqt4-dev</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_driver_msgs</depend>
+  <depend>anm_msgs</depend>
+  <depend>lanelet_map_msgs</depend>
+  <depend>roslib</depend>
+  <depend>extractroad_msg</depend>
+  <depend>vertical_wall_grid</depend>
+  <depend>plan2control_msgs</depend>
+  <depend>transform_tools</depend>
+  <depend>stiff_msgs</depend>
+  <depend>control_msgs</depend>
+  <depend>tinyspline_ros</depend>
+  <depend>three_one_msgs</depend>
+
+</package>

@@ -1,0 +1,12 @@
+<package format="2">
+    <name>visual_tools</name>
+    <description>visual tools</description>
+    <maintainer email="yu.zhang.bit@gmail.com">visual tools</maintainer>
+    <license>BSD</license>
+    <version>0.0.1</version>
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>roscpp</depend>
+    <depend>roslib</depend>
+    <depend>tf2</depend>
+    <depend>tf2_eigen</depend>
+</package>

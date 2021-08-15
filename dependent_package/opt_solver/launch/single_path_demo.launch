@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="opt_solver" type="single_path_node" name="single_path_node" args="" output="screen" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find opt_solver)/cfg/single_path_viz.rviz" output="screen" />
+</launch>

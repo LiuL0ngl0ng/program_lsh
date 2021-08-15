@@ -1,0 +1,27 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/lsh/catkin_ws/KYXZ/6t_git/devel/include/**",
+        "/home/lsh/catkin_ws/control_ws-main/chassis_testing/devel/include/**",
+        "/home/lsh/catkin_ws/control_ws-main/ecu_communication/devel/include/**",
+        "/home/lsh/catkin_ws/DongFeng/devel/include/**",
+        "/home/lsh/Coolhigh/devel/include/**",
+        "/opt/ros/kinetic/include/**",
+        "/home/lsh/catkin_ws/DongFeng/src/SendtoRadar/include/**",
+        "/home/lsh/catkin_ws/KYXZ/6t_git/src/planning/a_star_double_xml/include/**",
+        "/home/lsh/catkin_ws/control_ws-main/chassis_testing/src/chassis_testing/include/**",
+        "/home/lsh/catkin_ws/control_ws-main/ecu_communication/src/ecu_communication/include/**",
+        "/home/lsh/catkin_ws/KYXZ/6t_git/src/planning/dependent_package/tinyspline_ros/include/**",
+        "/home/lsh/catkin_ws/KYXZ/6t_git/src/planning/dependent_package/transform_tools/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}

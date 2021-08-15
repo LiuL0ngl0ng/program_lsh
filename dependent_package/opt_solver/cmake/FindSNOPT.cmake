@@ -1,0 +1,22 @@
+# Find SNOPT
+#
+# This sets the following variables:
+# SNOPT_FOUND
+# SNOPT_INCLUDE_DIRS
+# SNOPT_LIBRARIES
+# SNOPT_DEFINITIONS
+
+find_package(PkgConfig)
+pkg_check_modules(PC_SNOPT snopt)
+set(SNOPT_DEFINITIONS ${PC_SNOPT_CFLAGS_OTHER})
+set(SNOPT_INCLUDE_DIRS ${PC_SNOPT_INCLUDE_DIRS})
+set(SNOPT_LIBRARIES ${PC_SNOPT_LIBRARIES})
+set(SNOPT_VERSION ${PC_SNOPT_VERSION})
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(SNOPT DEFAULT_MSG
+  SNOPT_LIBRARIES SNOPT_INCLUDE_DIRS)
+
+mark_as_advanced(SNOPT_INCLUDE_DIRS SNOPT_LIBRARIES)
+
+

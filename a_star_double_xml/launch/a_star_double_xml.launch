@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+	<node pkg="a_star_double_xml" type="a_star_double_xml" name="a_star_double_xml" output="screen" >
+	    <rosparam command="load" file="$(find a_star_double_xml)/config/a_star_normal.yaml"/>
+	</node>
+</launch>

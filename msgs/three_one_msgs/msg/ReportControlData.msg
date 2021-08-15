@@ -1,0 +1,16 @@
+float32 curvature
+float32 speed
+uint16 rpm
+uint8 work_mode
+uint8 gear
+uint8 turn_to
+uint8 brake
+uint8 park
+uint8 cylinder_select
+uint8 suspension_select
+uint8 vertical_wall_mode
+uint8 suspension_work_mode
+uint8 suspension_work_mode_detail
+uint8 suspension_cylinder_select_mode
+uint8 suspension_cylinder_motor_control
+uint8 fix_two_chamber_valve

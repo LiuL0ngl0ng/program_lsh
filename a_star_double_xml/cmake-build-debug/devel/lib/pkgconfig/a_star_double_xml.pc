@@ -1,0 +1,8 @@
+prefix=/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/devel
+
+Name: a_star_double_xml
+Description: Description of a_star_double_xml
+Version: 0.1.0
+Cflags: -I/home/lll/lsh/src/a_star_double_xml/include
+Libs: -L${prefix}/lib 
+Requires: qt_build roscpp std_msgs sensor_driver_msgs anm_msgs lanelet_map_msgs roslib extractroad_msg plan2control_msgs vertical_wall_grid transform_tools stiff_msgs tinyspline_ros three_one_msgs control_msgs

@@ -1,0 +1,11 @@
+uint8 error_code
+uint8 two_chamber_valve
+uint8 vertical_wall_status
+uint8 entrenchment
+uint8 weapon_330
+uint8 weapon_28
+uint8 vehicle_height
+uint8 tailgate_state
+uint8 SOC
+int8 vehicle_roll
+int8 vehicle_pitch

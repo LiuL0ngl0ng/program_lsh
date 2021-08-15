@@ -1,0 +1,5 @@
+uint32 mileage
+uint32 left_pulse
+uint32 right_pulse
+float64 left_distance
+float64 right_distance

@@ -1,0 +1,2 @@
+uint8 priority
+float64 curvature

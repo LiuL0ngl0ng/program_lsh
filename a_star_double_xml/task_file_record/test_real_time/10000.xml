@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm generator="OpenStreetMap server" version="0.6">
+    <node lon="114.39634822" lat="37.84282296" id="10001"/>
+    <node lon="114.39631731" lat="37.84291294" id="10002"/>
+    <node lon="114.39621295" lat="37.84308329" id="10003"/>
+    <node lon="114.39615439" lat="37.84453878" id="10004"/>
+    <node lon="114.39611734" lat="37.84445350" id="10005"/>
+    <way id="10000">
+        <nd ref="10001"/>
+        <nd ref="10002"/>
+        <nd ref="10003"/>
+        <nd ref="10004"/>
+        <nd ref="10005"/>
+        <tag k="double way" v="yes"/>
+    </way>
+</osm>

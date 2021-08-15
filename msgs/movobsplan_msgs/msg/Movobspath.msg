@@ -1,0 +1,4 @@
+uint8 collision
+float64 penaltydepth
+float64 vel_to_dymicol
+geometry_msgs/Point position

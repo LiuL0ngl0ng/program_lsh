@@ -1,0 +1,33 @@
+#全局路网默认限速
+init_speed_limit:         10
+#折返模式
+come_and_go_mode:          0 #0:关闭折返，1:直线折返，2:绕圈
+#是否直接发送任务点
+get_node_from_txt:       false
+#是否利用vrep仿真
+vrep_simulate:           false
+#全局路网读取路径，从包的位置开始的相对位置
+way_net_file_path:       /xml_director/yuanshi0801 #yuanshi  vrep_way  yuanshi0731
+#任务点文件位置，从根目录下开始的相对位置
+task_file_path:          /taskfile/yuanshi0806_small.txt #yuanshi_task.txt   vrep_task.txt
+#接收GPS信号的话题名
+gps_topic_path:          /gpsdata  #/sensor_fusion_output
+
+
+#自动开启开关
+automatic_start:          true
+#是否用先验地图进行重规划
+use_prior_map_replan:    true
+#是否开启动态障碍物检测
+open_dynamic_obs_det:    true
+#是否开启烟雾检测
+open_foggy_det:           true
+# 是否对路网插值
+need_interpolation:       true
+# 是否使用B样条插值（默认为线性插值）
+use_bspline:              true
+#是否开启遥控模式
+remote_control_mode:     false
+use_remote_cmd:            false
+use_center_reverse:        false
+close_replan:              false

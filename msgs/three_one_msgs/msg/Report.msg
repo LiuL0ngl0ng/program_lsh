@@ -1,0 +1,11 @@
+ReportControlData control
+ReportGiveBack give_back
+ReportCylinderPressure cylinder_pressure
+ReportCylinderPosition cylinder_position
+ReportVehicleState vehicle_state
+ReportDistance distance
+ReportTorque torque
+ReportMotion motion
+uint8 control_mode
+uint8 operation_mode
+uint64 counter

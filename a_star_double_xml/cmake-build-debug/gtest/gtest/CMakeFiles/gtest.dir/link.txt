@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -std=gnu++11  -g  -shared -Wl,-soname,libgtest.so -o libgtest.so CMakeFiles/gtest.dir/src/gtest-all.cc.o  -L/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/gtest/gtest/src -Wl,-rpath,/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/gtest/gtest/src -lpthread 

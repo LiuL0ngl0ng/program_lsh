@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+
+<package format="2">
+  <name>movobsplan_msgs</name>
+  <version>0.2.0</version>
+  <description>
+    ROS messages for the movobs_plan_msgs package.
+  </description>
+  <maintainer email="aidous@gmail.com">
+
+  </maintainer>
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>message_runtime</depend>
+  <depend>message_generation</depend>
+  
+</package>
