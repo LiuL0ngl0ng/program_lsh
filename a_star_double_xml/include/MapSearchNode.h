@@ -52,6 +52,8 @@ public:
     bool wall_area;
     ///壕沟区域，true:开启 false:关闭
     bool ditch_area;
+    ///lsh//任务类型，记录当前路段中上一个任务点的任务属性
+    int cur_task_num;
     ///子节点链表，即是MapSearchNode性质的点中从此链表找出此子节点
     QList<MapSearchNode*> successorList;
     ///父节点踩链表，从此链表中找到父节点
@@ -84,6 +86,7 @@ public:
         parentList.clear();
         bConnection = false;
         type = -1;
+        cur_task_num = -1;
     }
 
     /**

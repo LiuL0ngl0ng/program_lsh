@@ -1,1 +1,1 @@
-set(ORDERED_PATHS "/opt/ros/kinetic/lib;/home/lll/lsh/devel/.private/transform_tools/lib;/home/lll/lsh/devel/.private/tinyspline_ros/lib")
+set(ORDERED_PATHS "/home/lll/lsh/devel/.private/transform_tools/lib;/home/lll/lsh/devel/.private/tinyspline_ros/lib;/opt/ros/kinetic/lib")

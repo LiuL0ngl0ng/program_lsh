@@ -28,7 +28,7 @@ struct Road_Line {
 /// \brief 描述任务点
 struct Task_Node {
     float lat,lon,x,y;
-    int Task_num;
+    int Task_num;   //任务序号
     int type;       //任务点属性
     bool on_road;    //当前任务点是否能够匹配到拓扑地图上
     double vlimit; //当前任务点的最大速度限制

@@ -545,8 +545,8 @@ public:
     ///定义结构体的指针，接下来加入到链表中
     Road_Line *m_pRoadLine1, *m_pRoadLine2;
     Road_Line tempRoadLine;
-    ///m_ptempnode指向当前车辆所处位置路点，m_pnextnode和m_pthirdnode分别指向当前所处位置的下一个和下下个路点
-    MapSearchNode *m_pStartNode ,*m_pEndNode,*m_ptempnode,*m_pnextnode,*m_pthirdnode;
+    ///m_ptempnode指向当前车辆所处位置路点，m_pnextnode和m_pthirdnode分别指向当前所处位置的下一个和下下个路点,nextnode_shadow表示//lsh//下一个任务点的投影点
+    MapSearchNode *m_pStartNode ,*m_pEndNode,*m_ptempnode,*m_pnextnode,*m_pthirdnode,*nexttask_shadow;
     ///m_pcurtask表示车辆当前所在的任务段，m_pnexttask和m_pthirdtask表示下一个任务和下下个任务
     Task_Node m_pcurtask,m_pnexttask,m_pthirdtask;
     ///垂直墙与壕沟任务点

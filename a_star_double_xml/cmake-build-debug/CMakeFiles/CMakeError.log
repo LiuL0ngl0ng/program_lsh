@@ -1,24 +1,24 @@
 Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
 Change Dir: /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_86e45/fast && /usr/bin/make -f CMakeFiles/cmTC_86e45.dir/build.make CMakeFiles/cmTC_86e45.dir/build
+Run Build Command(s):/usr/bin/make cmTC_5ff0f/fast && /usr/bin/make -f CMakeFiles/cmTC_5ff0f.dir/build.make CMakeFiles/cmTC_5ff0f.dir/build
 make[1]: Entering directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_86e45.dir/src.c.o
-/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_86e45.dir/src.c.o   -c /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_86e45
-/home/lll/Clion/JetBrainsCLionLinux64/clion/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_86e45.dir/link.txt --verbose=1
-/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    -rdynamic CMakeFiles/cmTC_86e45.dir/src.c.o  -o cmTC_86e45 
-CMakeFiles/cmTC_86e45.dir/src.c.o：在函数‘main’中：
+Building C object CMakeFiles/cmTC_5ff0f.dir/src.c.o
+/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_5ff0f.dir/src.c.o   -c /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_5ff0f
+/home/lll/Clion/JetBrainsCLionLinux64/clion/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5ff0f.dir/link.txt --verbose=1
+/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    -rdynamic CMakeFiles/cmTC_5ff0f.dir/src.c.o  -o cmTC_5ff0f 
+CMakeFiles/cmTC_5ff0f.dir/src.c.o：在函数‘main’中：
 src.c:(.text+0x3c)：对‘pthread_create’未定义的引用
 src.c:(.text+0x48)：对‘pthread_detach’未定义的引用
 src.c:(.text+0x59)：对‘pthread_join’未定义的引用
 src.c:(.text+0x6d)：对‘pthread_atfork’未定义的引用
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_86e45.dir/build.make:86: recipe for target 'cmTC_86e45' failed
-make[1]: *** [cmTC_86e45] Error 1
+CMakeFiles/cmTC_5ff0f.dir/build.make:86: recipe for target 'cmTC_5ff0f' failed
+make[1]: *** [cmTC_5ff0f] Error 1
 make[1]: Leaving directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Makefile:121: recipe for target 'cmTC_86e45/fast' failed
-make: *** [cmTC_86e45/fast] Error 2
+Makefile:121: recipe for target 'cmTC_5ff0f/fast' failed
+make: *** [cmTC_5ff0f/fast] Error 2
 
 
 Source file was:
@@ -44,39 +44,39 @@ int main(void)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_a4bb5/fast && /usr/bin/make -f CMakeFiles/cmTC_a4bb5.dir/build.make CMakeFiles/cmTC_a4bb5.dir/build
+Run Build Command(s):/usr/bin/make cmTC_d2747/fast && /usr/bin/make -f CMakeFiles/cmTC_d2747.dir/build.make CMakeFiles/cmTC_d2747.dir/build
 make[1]: Entering directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_a4bb5.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_a4bb5.dir/CheckFunctionExists.c.o   -c /home/lll/Clion/JetBrainsCLionLinux64/clion/bin/cmake/linux/share/cmake-3.15/Modules/CheckFunctionExists.c
-Linking C executable cmTC_a4bb5
-/home/lll/Clion/JetBrainsCLionLinux64/clion/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a4bb5.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_a4bb5.dir/CheckFunctionExists.c.o  -o cmTC_a4bb5 -lpthreads 
+Building C object CMakeFiles/cmTC_d2747.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_d2747.dir/CheckFunctionExists.c.o   -c /home/lll/Clion/JetBrainsCLionLinux64/clion/bin/cmake/linux/share/cmake-3.15/Modules/CheckFunctionExists.c
+Linking C executable cmTC_d2747
+/home/lll/Clion/JetBrainsCLionLinux64/clion/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d2747.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_d2747.dir/CheckFunctionExists.c.o  -o cmTC_d2747 -lpthreads 
 /usr/bin/ld: 找不到 -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_a4bb5.dir/build.make:86: recipe for target 'cmTC_a4bb5' failed
-make[1]: *** [cmTC_a4bb5] Error 1
+CMakeFiles/cmTC_d2747.dir/build.make:86: recipe for target 'cmTC_d2747' failed
+make[1]: *** [cmTC_d2747] Error 1
 make[1]: Leaving directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Makefile:121: recipe for target 'cmTC_a4bb5/fast' failed
-make: *** [cmTC_a4bb5/fast] Error 2
+Makefile:121: recipe for target 'cmTC_d2747/fast' failed
+make: *** [cmTC_d2747/fast] Error 2
 
 
 
 Determining if the Q_WS_WIN exist failed with the following output:
 Change Dir: /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_1eb36/fast && /usr/bin/make -f CMakeFiles/cmTC_1eb36.dir/build.make CMakeFiles/cmTC_1eb36.dir/build
+Run Build Command(s):/usr/bin/make cmTC_228cb/fast && /usr/bin/make -f CMakeFiles/cmTC_228cb.dir/build.make CMakeFiles/cmTC_228cb.dir/build
 make[1]: Entering directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_1eb36.dir/CheckSymbolExists.cxx.o
-/usr/bin/c++   -I/usr/include/qt4  -std=gnu++11     -o CMakeFiles/cmTC_1eb36.dir/CheckSymbolExists.cxx.o -c /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+Building CXX object CMakeFiles/cmTC_228cb.dir/CheckSymbolExists.cxx.o
+/usr/bin/c++   -I/usr/include/qt4  -std=gnu++11     -o CMakeFiles/cmTC_228cb.dir/CheckSymbolExists.cxx.o -c /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
 /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
 /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:8:19: error: ‘Q_WS_WIN’ was not declared in this scope
    return ((int*)(&Q_WS_WIN))[argc];
                    ^
-CMakeFiles/cmTC_1eb36.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_1eb36.dir/CheckSymbolExists.cxx.o' failed
-make[1]: *** [CMakeFiles/cmTC_1eb36.dir/CheckSymbolExists.cxx.o] Error 1
+CMakeFiles/cmTC_228cb.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_228cb.dir/CheckSymbolExists.cxx.o' failed
+make[1]: *** [CMakeFiles/cmTC_228cb.dir/CheckSymbolExists.cxx.o] Error 1
 make[1]: Leaving directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Makefile:121: recipe for target 'cmTC_1eb36/fast' failed
-make: *** [cmTC_1eb36/fast] Error 2
+Makefile:121: recipe for target 'cmTC_228cb/fast' failed
+make: *** [cmTC_228cb/fast] Error 2
 
 
 File /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
@@ -97,19 +97,19 @@ int main(int argc, char** argv)
 Determining if the Q_WS_QWS exist failed with the following output:
 Change Dir: /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_bfbd5/fast && /usr/bin/make -f CMakeFiles/cmTC_bfbd5.dir/build.make CMakeFiles/cmTC_bfbd5.dir/build
+Run Build Command(s):/usr/bin/make cmTC_91411/fast && /usr/bin/make -f CMakeFiles/cmTC_91411.dir/build.make CMakeFiles/cmTC_91411.dir/build
 make[1]: Entering directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_bfbd5.dir/CheckSymbolExists.cxx.o
-/usr/bin/c++   -I/usr/include/qt4  -std=gnu++11     -o CMakeFiles/cmTC_bfbd5.dir/CheckSymbolExists.cxx.o -c /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+Building CXX object CMakeFiles/cmTC_91411.dir/CheckSymbolExists.cxx.o
+/usr/bin/c++   -I/usr/include/qt4  -std=gnu++11     -o CMakeFiles/cmTC_91411.dir/CheckSymbolExists.cxx.o -c /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
 /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
 /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:8:19: error: ‘Q_WS_QWS’ was not declared in this scope
    return ((int*)(&Q_WS_QWS))[argc];
                    ^
-CMakeFiles/cmTC_bfbd5.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_bfbd5.dir/CheckSymbolExists.cxx.o' failed
-make[1]: *** [CMakeFiles/cmTC_bfbd5.dir/CheckSymbolExists.cxx.o] Error 1
+CMakeFiles/cmTC_91411.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_91411.dir/CheckSymbolExists.cxx.o' failed
+make[1]: *** [CMakeFiles/cmTC_91411.dir/CheckSymbolExists.cxx.o] Error 1
 make[1]: Leaving directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Makefile:121: recipe for target 'cmTC_bfbd5/fast' failed
-make: *** [cmTC_bfbd5/fast] Error 2
+Makefile:121: recipe for target 'cmTC_91411/fast' failed
+make: *** [cmTC_91411/fast] Error 2
 
 
 File /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
@@ -130,19 +130,19 @@ int main(int argc, char** argv)
 Determining if the Q_WS_MAC exist failed with the following output:
 Change Dir: /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_02980/fast && /usr/bin/make -f CMakeFiles/cmTC_02980.dir/build.make CMakeFiles/cmTC_02980.dir/build
+Run Build Command(s):/usr/bin/make cmTC_eafc1/fast && /usr/bin/make -f CMakeFiles/cmTC_eafc1.dir/build.make CMakeFiles/cmTC_eafc1.dir/build
 make[1]: Entering directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_02980.dir/CheckSymbolExists.cxx.o
-/usr/bin/c++   -I/usr/include/qt4  -std=gnu++11     -o CMakeFiles/cmTC_02980.dir/CheckSymbolExists.cxx.o -c /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+Building CXX object CMakeFiles/cmTC_eafc1.dir/CheckSymbolExists.cxx.o
+/usr/bin/c++   -I/usr/include/qt4  -std=gnu++11     -o CMakeFiles/cmTC_eafc1.dir/CheckSymbolExists.cxx.o -c /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
 /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
 /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:8:19: error: ‘Q_WS_MAC’ was not declared in this scope
    return ((int*)(&Q_WS_MAC))[argc];
                    ^
-CMakeFiles/cmTC_02980.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_02980.dir/CheckSymbolExists.cxx.o' failed
-make[1]: *** [CMakeFiles/cmTC_02980.dir/CheckSymbolExists.cxx.o] Error 1
+CMakeFiles/cmTC_eafc1.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_eafc1.dir/CheckSymbolExists.cxx.o' failed
+make[1]: *** [CMakeFiles/cmTC_eafc1.dir/CheckSymbolExists.cxx.o] Error 1
 make[1]: Leaving directory '/home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp'
-Makefile:121: recipe for target 'cmTC_02980/fast' failed
-make: *** [cmTC_02980/fast] Error 2
+Makefile:121: recipe for target 'cmTC_eafc1/fast' failed
+make: *** [cmTC_eafc1/fast] Error 2
 
 
 File /home/lll/lsh/src/a_star_double_xml/cmake-build-debug/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:

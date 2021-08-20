@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     if(w_thred.isRunning()){
         ROS_INFO("the thread t is running.");
     }else{
-        w_thred.start();//从此处进入thread.cpp中的run()函数
+        w_thred.start();//从此处进入tread.cpp中的run()函数
         //lsh//读取自启动设置，每100ms执行一次Thread::onTimeout()
         //lsh//Thread::onTimeout()是程序主循环
     }

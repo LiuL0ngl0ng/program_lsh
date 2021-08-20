@@ -23,7 +23,7 @@ AStarDoubleXML::AStarDoubleXML(int argc, char** argv, QWidget *parent) :
     record_flag = true;
     end_task_node_id = -1;
     first_planning_finished = false;
-    second_plan_trig_dis = 5;   //触发重规划第二次路径发送控制距离
+    second_plan_trig_dis = 6;   //触发重规划第二次路径发送控制距离
     backup_flag = false;
     first_path_flag = false;
     first_plan_start_id = -1;
@@ -288,7 +288,8 @@ void AStarDoubleXML::on_ReadTaskFile_clicked() {
                     m_attach_xml_file.Position_Trans_From_ECEF_To_UTM(cur_veh_gps.latitude,
                             cur_veh_gps.longitude,0,0,&current_x,&current_y);
                     double car2startTask = m_attach_xml_file.distance(current_x,current_y,task_iter->x,task_iter->y);
-                    if(car2startTask < 15){
+                    //if(car2startTask < 15){
+                    if(car2startTask < 0){
                         ROS_WARN("the car is near the start task point,abondon the start task point");
                         continue;
                     }
@@ -301,11 +302,34 @@ void AStarDoubleXML::on_ReadTaskFile_clicked() {
 
     //将当前车辆位置放入任务链表头
     Task_Node temp_node;
+    int last_task_type;
+    int last_task_num;
+    bool find_last_task_num;
+    find_last_task_num = false;
+    QList<Task_Node>::iterator task_iter3 = m_attach_xml_file.m_cMapMatch.TaskList.begin();
+    for(; task_iter3 != m_attach_xml_file.m_cMapMatch.TaskList.end(); task_iter3++){
+        if((task_iter3+1)->Task_num == start_num){
+            last_task_num=task_iter3->Task_num;
+            find_last_task_num = true;
+            break;
+        }
+    }//lsh//找到开始任务的上一个任务点，主要是为了应对有强制起始任务点时需要忽略多处未做过的任务点时，找到强制任务点起点的前一个点，记录其属性和编号，用于任务段匹配
+    if(!find_last_task_num){
+        ROS_WARN("can not find the task before start_num, directly use last_id.");
+        last_task_num=last_id;
+    }//lsh//若找不到则直接使用上一个之前求出的last_id
+    QList<Task_Node>::iterator task_iter2 = m_attach_xml_file.m_cMapMatch.TaskList.begin();
+    for(; task_iter2 != m_attach_xml_file.m_cMapMatch.TaskList.end(); task_iter2++){
+        if(task_iter2->Task_num == last_task_num){
+            last_task_type = task_iter2->type;
+            break;
+        }
+    }//lsh//记录上一个任务点的属性
     temp_node.lon = cur_veh_gps.longitude;
     temp_node.lat = cur_veh_gps.latitude;
-    temp_node.Task_num = 0;
+    temp_node.Task_num = (m_attach_xml_file.restart_id++)*10000000+last_task_num;//lsh//车辆坐标形成的任务点的编号等于上一个点的任务点编号加上10000000的整数倍
     temp_node.on_road = true;
-    temp_node.type = 0;
+    temp_node.type = last_task_type;//lsh//车辆坐标形成的任务点的类型等于上一个任务点的类型
     m_attach_xml_file.Position_Trans_From_ECEF_To_UTM(temp_node.lat,temp_node.lon,0,0,&temp_node.x,&temp_node.y);
     m_attach_xml_file.plan_task_list.prepend(temp_node);
     //lsh//将当前车辆位置设为第一个任务点
@@ -385,6 +409,14 @@ void AStarDoubleXML::on_OutputTxt_clicked() {
 }
 
 void AStarDoubleXML::RealTime(){
+    //lsh//根据检测到的新路口，和实时记录的GPS，实施构建路网，将其记录到road_network_list
+    //lsh//局部规划道路小于8m并计次完成后，生成有当前车辆位置和从沿规划结果下一路段开始的剩余任务点的重规划任务列表m_Replan_Task_list
+    //lsh//从走过的轨迹中规划出一条身后20m的道路
+    //lsh//倒车5m后道路小于15m，need_replanning_real_time再次变为true，此时使first_planning_flag = true;backup_flag = false;first_path_flag = true;开始重规划
+    //lsh//断点，在新的任务列表里进行重规划，重规划的结果存储在v_mapping_list
+    //lsh//将规划结果分为两条道路，并分别为两条路补充一段额外的掉头路段，并将第一条道路放入m_path_map_list
+    //lsh// 判断倒车到上一个岔道口位置的倒车路径是否大于300米，如果大于300米，则认为该路径不合适，或者规划失败时，继续使用之前的路径
+    //lsh//如果倒车第一阶段规划道路长度小于一定距离或者车辆速度持续小于0.2m/s，则发送第二条道路
     BuildTopologicalMap();
     //lsh//根据检测到的新路口，和实时记录的GPS，实施构建路网，将其记录到road_network_list
     dataTransfer();
@@ -516,9 +548,11 @@ void AStarDoubleXML::RealTime(){
             }//lsh//此时temp_mapmatch_list存储上一次规划结果v_mapping_list
 
             int value = m_attach_xml_file.RePlanning(current_vehicle_gps.latitude,current_vehicle_gps.longitude);
+            //lsh//断点，在新的任务列表里进行重规划，重规划的结果存储在v_mapping_list
+            //lsh//将规划结果分为两条道路，并分别为两条路补充一段额外的掉头路段，并将第一条道路放入m_path_map_list
             ROS_INFO("the first plan done.");
 
-            //判断倒车到上一个岔道口位置的倒车路径是否大于200米，如果大于200米，则认为该路径不合适，继续使用之前的路径
+
             float temp_dis = 0.0;
             if(!m_attach_xml_file.m_path_map_list.isEmpty()){
                 MapSearchNode* start_point = m_attach_xml_file.m_path_map_list.first();
@@ -559,7 +593,7 @@ void AStarDoubleXML::RealTime(){
                 m_attach_xml_file.ShowPathWithPathList();  //更新显示
                 m_attach_xml_file.publishWay(current_vehicle_gps,m_attach_xml_file.m_path_map_list);    //更新发布路网
                 return;
-            }
+            }//lsh// 判断倒车到上一个岔道口位置的倒车路径是否大于300米，如果大于300米，则认为该路径不合适，或者规划失败时，继续使用之前的路径
 
             m_attach_xml_file.is_forward = false;
             {QMutexLocker locker(&m_attach_xml_file.mutex_PathPlanFinishFlag);
@@ -589,12 +623,13 @@ void AStarDoubleXML::RealTime(){
                     }else{
                         wait_times_for_second_path = 0;
                     }
-                }
+                }//lsh//如果速度小于0.2开始计次
                 if (temp_distance < second_plan_trig_dis || wait_times_for_second_path > 600) {
                     {QMutexLocker locker(&m_attach_xml_file.mutex_PathPlanFinishFlag);
                         m_attach_xml_file.PathPlanFinishFlag = false;}
                     first_planning_finished = false;
                     first_path_flag = false;
+                    ROS_INFO("the left length of the first path is %f.",temp_distance);
                     ROS_INFO("clear wait_times_for_second_path.");
                     wait_times_for_second_path = 0;
                     ROS_INFO("planning the second path ......");
@@ -612,7 +647,7 @@ void AStarDoubleXML::RealTime(){
                     m_attach_xml_file.m_bPathPlaned = true;
                     //m_attach_xml_file.m_flag = 0;
                     m_attach_xml_file.ShowPathWithPathList();  //更新显示
-                }
+                }//lsh//如果倒车第一阶段规划道路长度小于一定距离或者车辆速度持续小于0.2m/s，则发送第二条道路
             } else {
                 ROS_FATAL("In RealTime(): can't get fallback node\n");
             }
@@ -997,7 +1032,7 @@ void AStarDoubleXML::Backup(sensor_msgs::NavSatFix current_vehicle_gps) {
                 /*if (ros_pub.need_replanning_real_time && m_attach_xml_file.m_pnexttask.type != 3
                     && m_attach_xml_file.m_pcurtask.type != 3 && m_attach_xml_file.m_pcurtask.type != 4){*///lsh//这是什么意思？如果是在特殊区域关闭重规划，为什么是在倒车后才关闭？
                 if (ros_pub.need_replanning_real_time && m_attach_xml_file.m_pnexttask.type != 1
-                    && m_attach_xml_file.m_pcurtask.type != 1 && m_attach_xml_file.m_pcurtask.type != 7){
+                    && m_attach_xml_file.m_pcurtask.type != 1 /*&& m_attach_xml_file.m_pcurtask.type != 7*/){
                     ros_pub.need_replanning_real_time = false;
                     first_planning_flag = true;
                     backup_flag = false;

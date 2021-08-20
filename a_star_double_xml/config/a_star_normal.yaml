@@ -7,11 +7,11 @@ get_node_from_txt:       false
 #是否利用vrep仿真
 vrep_simulate:           false
 #全局路网读取路径，从包的位置开始的相对位置
-way_net_file_path:       /xml_director/yuanshi0801 #yuanshi  vrep_way  yuanshi0731
+way_net_file_path:       /xml_director/yuanshi0816 #yuanshi  vrep_way  yuanshi0731
 #任务点文件位置，从根目录下开始的相对位置
 task_file_path:          /taskfile/yuanshi0806_small.txt #yuanshi_task.txt   vrep_task.txt
-#接收GPS信号的话题名
-gps_topic_path:          /gpsdata  #/sensor_fusion_output
+#订阅gps话题名
+gps_topic:               /gpsdata                  #/sensor_fusion_output   #/gpsdata
 
 
 #自动开启开关

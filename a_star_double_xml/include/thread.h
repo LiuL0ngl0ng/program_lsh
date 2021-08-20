@@ -51,8 +51,6 @@ public:
     QString home;
     ///接收到任务文件标志
     bool rcv_task_file;
-    ///接收gps信号的话题名
-    QString gps_topic;
 };
 
 #endif //A_STAR_DOUBLE_XML_THREAD_H

@@ -80,6 +80,10 @@ public:
      */
     void ReplanningStateCb(const std_msgs::UInt8 &semantic_replanning_signal);
     /**
+     * ///lsh///回调函数，接收搜索规划状态
+     */
+    void SearchStateCb(const std_msgs::UInt8 &semantic_replanning_signal);
+    /**
      * 回调函数，接收局部规划轨迹，用于判断是否倒车和重规划
      */
     void trajectoryCb(const plan2control_msgs::Trajectory &traj);
@@ -191,6 +195,8 @@ public:
     int gear_position;
     ///当前车辆是否处于重规划的第一条路上
     bool first_path_flag;
+    ///lsh//搜索规划结束标志位
+    bool if_search_end;
 
 public:
     //变量锁
@@ -213,6 +219,8 @@ private:
     ros::Subscriber vehicle_vrep_state_sub;
     ///接收重规划信息
     ros::Subscriber semantic_sub;
+    ///接收搜索规划状态
+    ros::Subscriber search_plan_sub;
     ///接收局部规划轨迹，用于判断是否倒车和重规划
     ros::Subscriber traj_sub_;
     ///接收岔道口信息
@@ -319,7 +327,7 @@ public:
     string way_net_file_path;
     ///任务文件读取路径
     string input_task_file_path;
-    ///接收gps信号的话题名：lll
+    ///gps订阅话题名
     string input_gps_topic;
 
 };

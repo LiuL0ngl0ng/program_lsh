@@ -110,8 +110,6 @@ public:
     QString taskfile_dir;
     ///接收和发布实例类
     PubMsg ros_pub;
-    ///接收gps信号的话题名 :lll
-    QString gps_topic;
 
 public:
 

@@ -76,6 +76,7 @@ AttachXmlFile::AttachXmlFile() {
 
     //update the vehicle location in real time
     PathPlanFinishFlag=false;
+
     //build topological map in real time
     intersec_id = 100;
     ordinary_id = 100000;
@@ -93,7 +94,7 @@ AttachXmlFile::AttachXmlFile() {
     fallback_node_id = -1;
     fb_intersec_id = -1;
     last_replan_tri_rec = -1;
-    restart_id = 10000000;
+    restart_id = 1;
     pub_path_size = 0;
 
     //路网匹配与更新
@@ -1851,7 +1852,7 @@ int AttachXmlFile::GeneratePathInfo() {
         {
             (*first_node_ptr)->theta = PointToTheta((*first_node_ptr)->x,(*first_node_ptr)->y,(*second_node_ptr)->x,(*second_node_ptr)->y);
             (*second_node_ptr)->s = (*first_node_ptr)->s+sqrt(pow((*first_node_ptr)->y-(*second_node_ptr)->y,2)+pow((*first_node_ptr)->x-(*second_node_ptr)->x,2));
-            (*second_node_ptr)->theta = (*first_node_ptr)->theta;
+            (*second_node_ptr)->theta = (*first_node_ptr)->theta;//lll:这一句有什么用？
             first_node_ptr = second_node_ptr;
         }
         return 1;
@@ -1928,7 +1929,7 @@ void AttachXmlFile::DeleteParentNode(MapSearchNode *tempnode,int NodeID) {
     MapSearchNode *deleteparentnode;
     QList<MapSearchNode *>::iterator pos,deletepos;
     pos = tempnode ->parentList.begin();
-    ROS_WARN("tempnode ->parentList.size111 is %d",tempnode ->parentList.size());
+    //ROS_WARN("tempnode ->parentList.size111 is %d",tempnode ->parentList.size());
     for( ; pos != tempnode ->parentList.end() ; )
     {
         deletepos = pos;//lsh//父节点的地址
@@ -1944,8 +1945,8 @@ void AttachXmlFile::DeleteParentNode(MapSearchNode *tempnode,int NodeID) {
         }
         pos = tempnode ->parentList.erase(deletepos);       //erase操作后，指针会自动指向下一个
     }
-    ROS_WARN("tempnode ->parentList.size222 is %d",tempnode ->parentList.size());
-    ROS_INFO("Delete parent relation between ( %d , %d )", tempnode->node_id , NodeID);
+    //ROS_WARN("tempnode ->parentList.size222 is %d",tempnode ->parentList.size());
+    //ROS_INFO("Delete parent relation between ( %d , %d )", tempnode->node_id , NodeID);
 }
 
 void AttachXmlFile::DeleteChildNode(MapSearchNode *tempnode,int NodeID) {
@@ -1976,7 +1977,7 @@ void AttachXmlFile::DeleteChildNode(MapSearchNode *tempnode,int NodeID) {
     MapSearchNode *deletechildnode;
     QList<MapSearchNode *>::iterator pos,deletepos;
     pos = tempnode ->successorList.begin();
-    ROS_WARN("tempnode ->successorList.size111 is %d",tempnode ->successorList.size());
+    //ROS_WARN("tempnode ->successorList.size111 is %d",tempnode ->successorList.size());
     for( ; pos != tempnode ->successorList.end() ; ) {
         deletepos = pos;//lsh//tempnode子节点的地址
         deletechildnode = *pos;//lsh//tempnode的子节点
@@ -1993,8 +1994,8 @@ void AttachXmlFile::DeleteChildNode(MapSearchNode *tempnode,int NodeID) {
         //lsh//删除tempnode每个子节点
         //erase操作后，指针会自动指向下一个
     }
-    ROS_WARN("tempnode ->successorList.size222 is %d",tempnode ->successorList.size());
-    ROS_INFO("Delete child relation between ( %d , %d )", tempnode->node_id , NodeID);
+    //ROS_WARN("tempnode ->successorList.size222 is %d",tempnode ->successorList.size());
+    //ROS_INFO("Delete child relation between ( %d , %d )", tempnode->node_id , NodeID);
 }
 
 void AttachXmlFile::AddSolutionToAllPlanNodeList() {
@@ -2641,6 +2642,11 @@ int AttachXmlFile::PlanWithTaskPoint(QList<Task_Node> &MyTaskList)  {
                 if(nsearch_state_first == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED) {//规划成功
                     AddSolutionToAllPlanNodeList();
                     //lsh//将路径存入m_path_map_list
+                    for(int i=0;i<m_path_map_list.size()-1;i++){
+                        m_path_map_list.at(i)->cur_task_num=Task1->Task_num;
+                    }
+                    m_path_map_list.at(m_path_map_list.size()-1)->cur_task_num=Task2->Task_num;
+                    //lsh//给规划的路径上除最后一个点外的所有路点附上这段路第一个任务点的属性，最后一个点附上第二个任务点属性
                     ROS_INFO("plan path form %d to %d done.", pnodeF->node_id, pnodeB->node_id);
                 } else if(nsearch_state_first == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED) {//规划失败
                     ROS_FATAL("PlanWithTaskPoint: plan path form %d to %d failed!", pnodeF->node_id, pnodeB->node_id);
@@ -2691,13 +2697,16 @@ int AttachXmlFile::PlanWithTaskPoint(QList<Task_Node> &MyTaskList)  {
                     //lsh//第一个节点不加入到m_path_map_list中
                     tempnode7 = m_astarsearch.GetSolutionNext();
                     while(tempnode7) {
+                        tempnode7->cur_task_num=Task1->Task_num;
                         m_path_map_list.append(tempnode7);
                         tempnode7 = m_astarsearch.GetSolutionNext();
                         if(NULL == tempnode7) {
                             break;
                         }
                     }
-                    ROS_INFO("plan path from %d to %d done.", pnodeF->node_id, pnodeB->node_id);
+                    m_path_map_list.back()->cur_task_num=Task2->type;
+                    //lsh//给规划的路径上除最后一个点外的所有路点附上这段路第一个任务点的属性，最后一个点附上第二个任务点属性
+                    ROS_INFO("plan path form %d to %d done.", pnodeF->node_id, pnodeB->node_id);
                 } else if (nsearch_state_second == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED) {
                     ROS_FATAL("PlanWithTaskPoint: plan path form %d to %d failed!", pnodeF->node_id, pnodeB->node_id);
                     return 0;
@@ -2791,8 +2800,8 @@ void AttachXmlFile::Receiveinfo(float lat,float lon) {
         for(; tmp_RoadLine2!=m_pVelNode->RoadList.end(); tmp_RoadLine2++) {
             if((*tmp_RoadLine1)->Dist  >  (*tmp_RoadLine2) ->Dist){
                 temp=*tmp_RoadLine1;
-                *tmp_RoadLine1 = *tmp_RoadLine2;
-                *tmp_RoadLine2=temp;
+                *tmp_RoadLine1 = *tmp_RoadLine2;//lsh//较小的一个
+                *tmp_RoadLine2=temp;//lsh//较大的一个
             }
         }//lsh//找到最近的投影点
         QList<MapSearchNode *>::iterator tempnode2,nextnode2;
@@ -2825,7 +2834,7 @@ void AttachXmlFile::Receiveinfo(float lat,float lon) {
             m_pVelNode->RoadList.clear();
         }//lsh//原本记录的是投影点和投影点距离
         m_ptempnode = *tempnode2;//lsh//包围最近投影点的路点向量中的第一个路点
-        m_nStartLastNode = m_ptempnode ->node_id;//lsh//用来存放路点ID，防止重复读入道路数据
+        m_nStartLastNode = m_ptempnode ->node_id;//lsh//用来存放道路ID，防止重复读入道路数据
         m_pnextnode = *nextnode2;//lsh//包围最近投影点的路点向量中的第二个路点
         if((nextnode2+1) != v_mapping_list.end()){
             m_pthirdnode = *(nextnode2+1);//lsh//包围最近投影点的路点向量中的第三个路点
@@ -2839,6 +2848,7 @@ void AttachXmlFile::Receiveinfo(float lat,float lon) {
         else
             m_flag = 3;//lsh//此时第三个路点为终点
         last_match_num = -1;
+        update_flag_for_task = 0;
     }
 //lsh//m_flag=0
 //lsh//找到包围车辆在规划道路上投影点的路点向量中的第一个路点、第二个路点和第三个路点
@@ -3086,12 +3096,20 @@ void AttachXmlFile::Receiveinfo(float lat,float lon) {
             min_dis_to_path = dist;
         }
     }//lsh//计算车辆当前位置到所有规划路点的最小距离
-    if(min_dis_to_path < 5 && dis_to_match_road > 30 /*&& m_pnextnode->type != 3*/){    //当下一任务区为搜索区域时不进行匹配更新
+    if(min_dis_to_path < 5 && dis_to_match_road > 20 /*&& m_pnextnode->type != 3*/){    //当下一任务区为搜索区域时不进行匹配更新
         float tempD2MatchRoad = 0.0;
         if(m_flag == 2){    //当flag = 3or4时，停止重新匹配
             std::cout << "min_dis_to_path" << min_dis_to_path << std::endl;
             std::cout << "dis_to_match_road" << dis_to_match_road << std::endl;
             ROS_WARN("too far from match point, rematch !!!");
+            m_flag=0;
+            //lshadd0818//
+            /*MapSearchNode *m_ptempnode_cp,*m_pnextnode_cp,*m_pthirdnode_cp;
+            QList<MapSearchNode *>::iterator m_pos_cp;
+            m_ptempnode_cp=m_ptempnode;
+            m_pnextnode_cp=m_pnextnode;
+            m_pthirdnode_cp=m_pthirdnode;
+            m_pos_cp=m_pos;//lshadd0818//
             do{
                 m_nStartLastNode = m_ptempnode->node_id;
                 m_nStartNode = m_pnextnode->node_id;
@@ -3109,7 +3127,19 @@ void AttachXmlFile::Receiveinfo(float lat,float lon) {
                 m_cMapMatch.PointToLineDistance(m_pVelNode->x,m_pVelNode->y,
                                                 m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,
                                                 tempD2MatchRoad);//点到道路1的距离
-            }while(tempD2MatchRoad < 10);
+            *//*}while(tempD2MatchRoad < 10);*//*
+            //lshadd0818//
+            }while(tempD2MatchRoad > 10);
+            if(tempD2MatchRoad > 10){
+                m_ptempnode=m_ptempnode_cp;
+                m_pnextnode=m_pnextnode_cp;
+                m_pthirdnode=m_pthirdnode_cp;
+                m_pos=m_pos_cp;
+                m_nStartLastNode = m_ptempnode->node_id;
+                m_nStartNode = m_pnextnode->node_id;
+                m_flag=2;
+                ROS_WARN("too far from front road, can not rematch, keep last m_ptempnode.");
+            }*///lshadd0818//
         }
     }//lsh//？？？若mflag=2且当前位置到规划点距离小但到投影点距离大时重新向前匹配
     //非重规划时，在前进后退转换点进行切换时，当需要向前更新匹配点时，则进行下面的操作
@@ -3232,6 +3262,8 @@ vector<cv::Point2i> AttachXmlFile::getRotatePoint(vector<cv::Point2i> Points, co
 }
 
 int AttachXmlFile::RePlanning(float flat, float flon) {
+    //lsh//断点，在新的任务列表里进行重规划，重规划的结果存储在v_mapping_list
+    //lsh//将规划结果分为两条道路，并分别为两条路补充一段额外的掉头路段，并将第一条道路放入m_path_map_list
     //更新任务链表
     //ReCreateTaskList(flat,flon);
 
@@ -3306,7 +3338,7 @@ int AttachXmlFile::RePlanning(float flat, float flon) {
             break;
         }
         if((tempnode +1) == m_astarsearch.NodeList.end()) {
-            std::cout << "m_astarsearch size: " << m_astarsearch.NodeList.size();
+            std::cout << "m_astarsearch.NodeList size: " << m_astarsearch.NodeList.size();
             std::cout << "RestartnextID: " << ReStartNextID << std::endl;
             ROS_FATAL("In RePlanning: Don't find the ReStartNextID node.");
             return 0;
@@ -3316,8 +3348,8 @@ int AttachXmlFile::RePlanning(float flat, float flon) {
     //lsh//删除(*tempnode)的所有子节点，删除除m_StartNode.ID对应节点外其他子节点的的所有父子节点
     DeleteParentNode((*tempnode),m_StartNode.ID);
 
-    int value = PlanWithTaskPoint(m_Replan_Task_list);
-    if(value == 0){
+    int value = PlanWithTaskPoint(m_Replan_Task_list);//lsh//规划结果存储在m_path_map_list与v_mapping_list
+    if(value == 0){//lsh//此时规划失败
         ROS_FATAL("PlanWithTaskPoint: plan failed!!!");
         //copy new NodeList to original_road_network_list
         if(!original_road_network_list.isEmpty())
@@ -3327,7 +3359,7 @@ int AttachXmlFile::RePlanning(float flat, float flon) {
             original_road_network_list.append(*road_iter);
         }
         return 0;
-    }
+    }//lsh//规划失败时original_road_network_list与m_astarsearch.NodeList存放内容相同
     //在规划成功后，记录该阻塞位置
     /*obs_node_id.append((*tempnode)->node_id);
     ROS_INFO("record obs id: %d" , (*tempnode)->node_id);*/
@@ -3350,11 +3382,18 @@ int AttachXmlFile::RePlanning(float flat, float flon) {
         original_road_network_list.append(*road_iter);
     }
     splitPath(&m_path_map_list);
+    //lsh//将规划结果从路口点分为两段，分别放入first_path和second_path
+    //lsh//找到一条18米左右的可通行倒车路径
+    //lsh//将该倒车路径添加到first_path与second_path中，并将first_path放入m_path_map_list
     ShowPathWithPathList();  //更新显示
     return 1;
 }
 
 void AttachXmlFile::splitPath(QList<MapSearchNode *> *result_path) {
+    //lsh//将规划结果从路口点分为两段，分别放入first_path和second_path
+    //lsh//找到路口点的所有子节点中不与当前规划结果路点相同的子节点
+    //lsh//找到一条18米左右的可通行倒车路径
+    //lsh//将该倒车路径添加到first_path与second_path中，并将first_path放入m_path_map_list
     std::cout << "split path ......." << std::endl;
     if(!first_path.isEmpty()){
         first_path.clear();
@@ -3371,7 +3410,7 @@ void AttachXmlFile::splitPath(QList<MapSearchNode *> *result_path) {
         first_path.append(*path_iter);
         recent_path.append(*path_iter);
         if((*path_iter)->intersection){
-            nearest_intersec = *path_iter;
+            nearest_intersec = *path_iter;//lsh//nearest_intersec记住路口点位置
             if(path_iter + 1 != result_path->end()){
                 recent_path.append(*(path_iter + 1));
             }
@@ -3380,7 +3419,8 @@ void AttachXmlFile::splitPath(QList<MapSearchNode *> *result_path) {
             }
             break;
         }
-    }
+    }//lsh//将路口前且包含路口的点存入first_path，将路口后的点且包括路口存入second_path
+    //lsh//nearest_intersec记录路口点，recent_path存放比一段路多一个再往后延伸的路点
 
     //找到一个不在规划路径上的分岔口用于倒车
     MapSearchNode* available_node = NULL;
@@ -3398,13 +3438,13 @@ void AttachXmlFile::splitPath(QList<MapSearchNode *> *result_path) {
             }
         }
         if(find_flag){ break; }
-    }
+    }//lsh//找到路口点的所有子节点中不与当前规划结果路点相同的子节点
     /*QList<MapSearchNode*>::iterator fork_iter1 = nearest_intersec->successorList.begin();
     //std::cout << "the nearest_intersec successorlist :" << std::endl;
     for(; fork_iter1 != nearest_intersec->successorList.end(); fork_iter1++){
         std::cout << "    " << (*fork_iter1)->node_id << std::endl;
     }*/
-    //找到一条8米左右的可通行倒车路径
+
     QList<MapSearchNode*> temp_avai_fork_list;
     if(available_node == NULL){
         ROS_WARN("splitPath(): cannot find an available fork.");
@@ -3428,7 +3468,7 @@ void AttachXmlFile::splitPath(QList<MapSearchNode *> *result_path) {
                 }
             }
         }
-    }
+    }//lsh//找到一条18米左右的可通行倒车路径
 
     //将该倒车路径添加到两段重规划路径中
     std::cout << "temp_avai_fork_list: " << std::endl;
@@ -3445,7 +3485,7 @@ void AttachXmlFile::splitPath(QList<MapSearchNode *> *result_path) {
     QList<MapSearchNode*>::iterator copy_iter = first_path.begin();
     for(; copy_iter != first_path.end(); copy_iter++){
         m_path_map_list.append(*copy_iter);
-    }
+    }//lsh//m_path_map_list存储第一段路
 
     std::cout << "split path done." << std::endl;
 }
@@ -3462,7 +3502,28 @@ void AttachXmlFile::ReCreateTaskList(float flat,float flon) {
     m_StartNode.lon = flon;//lsh//重规划的起始点
     Position_Trans_From_ECEF_To_UTM(m_StartNode.lat, m_StartNode.lon,0,0,&m_StartNode.x, &m_StartNode.y);
 
-    m_StartNode.ID = restart_id++;//lsh//每次重规划前，将车当前位置作为第一个任务点，并对其分配ID，restart_id从10000000开始记
+    QList<MapSearchNode*>::iterator Iter_cp;
+    int first_task_num_cp = -1;
+    Iter_cp = m_pos;//lsh//表示规划结果v_mapping_list中车辆第四个路点
+    bool on_same_road_flag_cp = true;
+    for(; Iter_cp != v_mapping_list.end(); Iter_cp++) {//lsh//v_mapping_list为m_path_map_list的复制，为规划结果
+        if(on_same_road_flag_cp && ((*Iter_cp)->intersection)) {
+            on_same_road_flag_cp = false;
+        }//lsh//相当于从下条道路开始*Iter_cp++
+        //找到未遍历任务点的第一个任务点
+        if((*Iter_cp)->type > 0//lsh//不是起点
+        && std::abs((*Iter_cp)->node_id - m_pnexttask.Task_num) <=2//lsh//找到下条道路上的第一个任务投影点，其需要在下一个任务点序号2个左右
+        && !on_same_road_flag_cp){
+            first_task_num_cp = (*Iter_cp)->node_id;
+            if(first_task_num_cp < 2){
+                ROS_WARN("first_task_num_cp < 2, can not find the last task num when replanning.");
+                return;
+            }
+            break;
+        }//lsh//实质上是找到下一段路第一个任务点的编号
+    }
+
+    m_StartNode.ID = (restart_id++)*10000000+(first_task_num_cp-1);//lsh//每次重规划前，将车当前位置作为第一个任务点，并对其分配ID，restart_id其为10000000的整数倍加上下一段路第一个任务点的上一个任务点的编号
 
     QList<MapSearchNode*>::iterator PreIter,NextIter;
     PreIter = m_path_map_list.begin();//lsh//规划结果的点序列，只包含xy等信息
@@ -3494,6 +3555,15 @@ void AttachXmlFile::ReCreateTaskList(float flat,float flon) {
             tempRoadLine.Road_nodex = tempRoadLine2 ->Road_nodex;
             tempRoadLine.Road_nodey = tempRoadLine2 ->Road_nodey;
 
+            int last_task_type;
+            QList<Task_Node>::iterator task_iter2 = m_cMapMatch.TaskList.begin();
+            for(; task_iter2 != m_cMapMatch.TaskList.end(); task_iter2++){
+                if(task_iter2->Task_num == (*PreIter1)->cur_task_num){
+                    last_task_type = task_iter2->type;
+                    break;
+                }
+            }
+
             //update the task list.
             Task_Node tmptaskNode;
             tmptaskNode.lat=m_StartNode.lat;//lsh//使用车辆当前经纬度
@@ -3501,7 +3571,7 @@ void AttachXmlFile::ReCreateTaskList(float flat,float flon) {
             tmptaskNode.x=tempRoadLine.Road_nodex;//lsh//使用车辆投影坐标
             tmptaskNode.y=tempRoadLine.Road_nodey;
             tmptaskNode.Task_num=m_StartNode.ID;
-            tmptaskNode.type = 0;//lsh//设为起点
+            tmptaskNode.type = last_task_type;//lsh//将当前任务点的属性记录为上一次规划时最近路点的任务属性
             tmptaskNode.on_road = true;                //默认起点位置在路上
             tmptaskNode.vlimit = (*NextIter1)->vlimit;
             tmptaskNode.concave_obs_det = (*NextIter1)->concave_obs_det;
@@ -3528,7 +3598,7 @@ void AttachXmlFile::ReCreateTaskList(float flat,float flon) {
                 }
                 m_Replan_AddNode_list.push_back(tmpaddnode);
                 replanning_add_node = 1;
-                ReStartNextID = tmpaddnode.Task_num;
+                ReStartNextID = tmpaddnode.Task_num;//lsh//用于把当前重规划时的路点加入到道路连接关系中
                 ROS_WARN("next point is goback point,record it as a new way point");
             }else{
                 ReStartNextID = (*NextIter1)->node_id;//lsh//触发重规划时车辆当前位置的下一个路点ID
@@ -4417,7 +4487,7 @@ void AttachXmlFile::taskMapMatch(float flat, float flon, QList<Task_Node> *task_
     //lsh//m_pTaskNode辅助计算，保存计算结果
     float current_x,current_y;
     Position_Trans_From_ECEF_To_UTM(flat,flon,0,0,&current_x,&current_y);
-    m_pTaskNode->x = current_x;
+    m_pTaskNode->x = current_x;     //m_pTaskNode是车的位置
     m_pTaskNode->y = current_y;
     //lsh//当前坐标
 
@@ -4489,7 +4559,7 @@ void AttachXmlFile::mapMatchAndUpdatefortask(float flat, float flon){
 //lsh//update_flag_for_task=3，第三个任务点是任务点列表的结尾
 //lsh//车辆到下一个任务点距离小于5时，update_flag_for_task = 4，任务点向前平移
 //lsh//update_flag_for_task=4，第二个任务点是任务点列表的结尾
-//lsh//车辆当前位置到最后一个任务点的距离小于8时，update_flag_for_task = 5，表示进入终点停车区域
+//lsh//车辆当前位置到最后一个第二个任务点的距离小于8时，update_flag_for_task = 5，表示进入终点停车区域
     float x,y;
     Position_Trans_From_ECEF_To_UTM(flat,flon,0,0, &x,&y);
     if(!m_pTaskNode->RoadList.isEmpty())
@@ -4513,7 +4583,7 @@ void AttachXmlFile::mapMatchAndUpdatefortask(float flat, float flon){
         taskMapMatch(flat,flon, &m_cMapMatch.TaskList, &last_id,&next_id);
         QList<Task_Node>::iterator task_iter = m_cMapMatch.TaskList.begin();
         for(; task_iter != m_cMapMatch.TaskList.end(); task_iter++){
-            if(find_start_task){
+            if(false/*find_start_task*/){       //lll:这仍然这样吗？
                 if(task_iter->manu == 100){
                     m_pcurtask = *task_iter;
                     task_iter++;
@@ -4523,7 +4593,7 @@ void AttachXmlFile::mapMatchAndUpdatefortask(float flat, float flon){
                     break;
                 }
             }//lsh//若find_start_task=true，找到强制起始任务点设置为当前任务向量的第一个任务点，下一个任务点设为第二个任务点
-            else{
+            /*else{
                 if(task_iter->Task_num == last_id){
                     m_pcurtask = *task_iter;
                 }
@@ -4531,26 +4601,56 @@ void AttachXmlFile::mapMatchAndUpdatefortask(float flat, float flon){
                     m_pnexttask = *task_iter;
                     break;
                 }
-            }//lsh//若无强制任务起点则设当前距离最近任务点为当前任务向量的第一个任务点、下一个任务点为第二个任务点
+            }//lsh//若无强制任务起点则设当前距离最近任务点为当前任务向量的第一个任务点、下一个任务点为第二个任务点*/
+            else{
+                int cur_task;
+                if (m_ptempnode->cur_task_num > 10000000){
+                    cur_task=m_ptempnode->cur_task_num % 10000000;       //lll是不是应该 % 10 ?
+                }else{
+                    cur_task=m_ptempnode->cur_task_num;
+                }
+                if(cur_task > m_cMapMatch.TaskList.size()){
+                    ROS_ERROR("(cur_task_num is bigger than m_cMapMatch.TaskList.size");
+                    return;
+                }
+                if(task_iter->Task_num == cur_task){
+                    m_pcurtask = *task_iter;
+                    task_iter++;
+                    m_pnexttask = *task_iter;
+                    QList<MapSearchNode*>::iterator Iter_shadow=v_mapping_list.begin();
+                    for(;Iter_shadow != v_mapping_list.end();Iter_shadow++){
+                        if((*Iter_shadow)->node_id==m_pnexttask.Task_num){
+                            nexttask_shadow=*Iter_shadow;
+                            break;
+                        }
+                    }
+                    if(Iter_shadow==v_mapping_list.end()){
+                        nexttask_shadow->x=m_pnexttask.x;
+                        nexttask_shadow->y=m_pnexttask.y;
+                        ROS_ERROR("cannot find the shadow do the m_pnexttask, directly use m_pnexttask.");
+                    }//lsh//寻找m_pnextnode在道路上的投影点
+                    break;
+                }
+            }
         }
         if((task_iter+1) != m_cMapMatch.TaskList.end()){
             m_pthirdtask = *(task_iter+1);
         }else{
-            update_flag_for_task = 4;//lsh//第三个任务点为任务点的结束
+            update_flag_for_task = 4;//lsh//只剩下一个任务点
             return;
         }
         m_task_pos = task_iter+2;
         if(m_task_pos != m_cMapMatch.TaskList.end())
             update_flag_for_task = 2;//lsh//当前任务点距离最后一个任务点还远
         else
-            update_flag_for_task = 3;//lsh//第四个任务点是最后一个任务点
+            update_flag_for_task = 3;//lsh//只剩下两个任务点
     }
 
     if(update_flag_for_task == 2) {
         m_pVelNode ->x = (float)x ;
         m_pVelNode ->y = (float)y ;
 
-        m_cMapMatch.LineAndLinePoint(m_pcurtask.x,m_pcurtask.y, m_pnexttask.x,m_pnexttask.y,
+        /*m_cMapMatch.LineAndLinePoint(m_pcurtask.x,m_pcurtask.y, m_pnexttask.x,m_pnexttask.y,
                                      m_pVelNode->x,m_pVelNode->y,
                                      m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey);
         //lsh//当前车辆位置与当前任务点向量的交点
@@ -4568,7 +4668,15 @@ void AttachXmlFile::mapMatchAndUpdatefortask(float flat, float flon){
         //lsh//当前坐标到下一段任务段投影点的距离
         double dis2next = distance(m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,m_pnexttask.x,m_pnexttask.y);
         //lsh//当前投影点到下一个任务点的距离
-        if(m_pRoadLine1->Dist > m_pRoadLine2->Dist || dis2next < 5) {       //到一下任务路段的距离小于本任务段的距离时，证明换任务段了
+        if(m_pRoadLine1->Dist > m_pRoadLine2->Dist || dis2next < 5) {       //到一下道路的距离小于本条道路的距离时，证明换道了*/
+        m_cMapMatch.LineAndLinePoint(m_ptempnode->x,m_ptempnode->y, m_pnextnode->x,m_pnextnode->y,
+                                     m_pVelNode->x,m_pVelNode->y,
+                                     m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey);
+        //lsh//当前车辆位置与当前路点向量的交点
+        /*double dis2next = distance(m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,m_pnexttask.x,m_pnexttask.y);*/
+        double dis2next = distance(m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,nexttask_shadow->x,nexttask_shadow->y);
+        //lsh//当前投影点到下一个任务点的距离
+        if(dis2next < 5) {       //到一下道路的距离小于本条道路的距离时，证明换道了
             if(dis2next < 5){
                 ROS_INFO("dis2next < 5 , toggle current path.");
             }else{
@@ -4577,6 +4685,20 @@ void AttachXmlFile::mapMatchAndUpdatefortask(float flat, float flon){
             update_flag_for_task = 2;
             m_pcurtask = m_pnexttask;
             m_pnexttask = m_pthirdtask;
+
+            QList<MapSearchNode*>::iterator Iter_shadow=v_mapping_list.begin();
+            for(;Iter_shadow != v_mapping_list.end();Iter_shadow++){
+                if((*Iter_shadow)->node_id==m_pnexttask.Task_num){
+                    nexttask_shadow=*Iter_shadow;
+                    break;
+                }
+            }
+            if(Iter_shadow==v_mapping_list.end()){
+                nexttask_shadow->x=m_pnexttask.x;
+                nexttask_shadow->y=m_pnexttask.y;
+                ROS_ERROR("cannot find the shadow do the m_pnexttask, directly use m_pnexttask.");
+            }//lsh//寻找m_pnextnode在道路上的投影点
+
             if(m_task_pos != m_cMapMatch.TaskList.end())
                 m_pthirdtask = *m_task_pos;
             m_task_pos++;
@@ -4587,35 +4709,59 @@ void AttachXmlFile::mapMatchAndUpdatefortask(float flat, float flon){
         }//lsh//若车辆位置到当前任务点向量距离比到下一段任务点向量距离远，或者车辆任务投影点到下一个任务点距离小于5，则向后平移任务点
     }
 
-    if(update_flag_for_task == 3 )  //lsh//第三个任务点是任务结束
+    if(update_flag_for_task == 3 )  //lsh//只剩下两个任务点
     {
         m_pVelNode ->x = (float)x ;
         m_pVelNode ->y = (float)y ;
-        m_cMapMatch.LineAndLinePoint(m_pcurtask.x,m_pcurtask.y,m_pnexttask.x,m_pnexttask.y,
+        /*m_cMapMatch.LineAndLinePoint(m_pcurtask.x,m_pcurtask.y,m_pnexttask.x,m_pnexttask.y,
                                      m_pVelNode->x,m_pVelNode->y,
                                      m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey);
-        //lsh//记录车辆当前位置到任务点上的投影点
-        double dis2next = distance(m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,m_pnexttask.x,m_pnexttask.y);
+        //lsh//记录车辆当前位置到任务点上的投影点*/
+        m_cMapMatch.LineAndLinePoint(m_ptempnode->x,m_ptempnode->y, m_pnextnode->x,m_pnextnode->y,
+                                     m_pVelNode->x,m_pVelNode->y,
+                                     m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey);
+        //lsh//当前车辆位置与当前路点向量的交点
+        /*double dis2next = distance(m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,m_pnexttask.x,m_pnexttask.y);*/
+        double dis2next = distance(m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,nexttask_shadow->x,nexttask_shadow->y);
         //lsh//记录当前投影点到下一个任务点的距离
         if( dis2next < 5 ) {
             ROS_INFO("dis2next < 5 , toggle current path.");
             update_flag_for_task = 4;
             m_pcurtask = m_pnexttask;
             m_pnexttask = m_pthirdtask;
+
+            QList<MapSearchNode*>::iterator Iter_shadow=v_mapping_list.begin();
+            for(;Iter_shadow != v_mapping_list.end();Iter_shadow++){
+                if((*Iter_shadow)->node_id==m_pnexttask.Task_num){
+                    nexttask_shadow=*Iter_shadow;
+                    break;
+                }
+            }
+            if(Iter_shadow==v_mapping_list.end()){
+                nexttask_shadow->x=m_pnexttask.x;
+                nexttask_shadow->y=m_pnexttask.y;
+                ROS_ERROR("cannot find the shadow do the m_pnexttask, directly use m_pnexttask.");
+            }//lsh//寻找m_pnextnode在道路上的投影点
+
             ROS_INFO("the car is at %d task point.",m_pcurtask.Task_num);
         }//lsh//车辆到下一个任务点距离小于5时，update_flag_for_task = 4，任务点向前平移
     }
 
-    if(update_flag_for_task == 4){//lsh//第四个任务点是任务结束
+    if(update_flag_for_task == 4){//lsh//只剩下一个任务点
         m_pVelNode ->x = (float)x ;
         m_pVelNode ->y = (float)y ;
-        m_cMapMatch.LineAndLinePoint(m_pcurtask.x,m_pcurtask.y,m_pnexttask.x,m_pnexttask.y,
+        /*m_cMapMatch.LineAndLinePoint(m_pcurtask.x,m_pcurtask.y,m_pnexttask.x,m_pnexttask.y,
                                      m_pVelNode->x,m_pVelNode->y,
                                      m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey);
-        //lsh//记录车辆当前位置到任务点上的投影点
-        double dis2park = distance(m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,m_pnexttask.x,m_pnexttask.y);
+        //lsh//记录车辆当前位置到任务点上的投影点*/
+        m_cMapMatch.LineAndLinePoint(m_ptempnode->x,m_ptempnode->y, m_pnextnode->x,m_pnextnode->y,
+                                     m_pVelNode->x,m_pVelNode->y,
+                                     m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey);
+        //lsh//当前车辆位置与当前路点向量的交点
+        /*double dis2park = distance(m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,m_pnexttask.x,m_pnexttask.y);*/
+        double dis2park = distance(m_pRoadLine1->Road_nodex,m_pRoadLine1->Road_nodey,nexttask_shadow->x,nexttask_shadow->y);
         //lsh//记录当前投影点到下一个任务点的距离
-        if(dis2park < 8.0) {
+        if(dis2park < 10.0) {
             //ROS_INFO("the car is at park area!");
             update_flag_for_task = 5;
             //lsh//车辆当前位置到第二个任务点的距离小于8时，update_flag_for_task = 5，表示进入终点停车区域
@@ -4627,7 +4773,7 @@ void AttachXmlFile::mapMatchAndUpdate(float flat, float flon)   {
 //lsh//匹配车辆在道路的位置，记录第一、二、三个路点，并更新m_flag的值
 //lsh//匹配车辆在任务点的位置，记录第一、二、三个任务点，并更新update_flag_for_task的值
 //lsh//若当前道路的原始道路属性和任务点当前任务属性不相同，并且不是即将结束任务，显示当前任务信息
-//lsh//若到达终点停车区域，当前道路属性cur_road_type = 1，否则车前道路属性等于任务属性
+//lsh//若到达终点停车区域，当前道路属性cur_road_type = 1，否则但前道路属性等于任务属性
 //lsh//设置当前路段限速cur_road_vlimit为当前路点的限速
     //qDebug()<<"match thread: "<<QThread::currentThreadId();
     Receiveinfo(flat,flon);
@@ -5050,7 +5196,7 @@ void AttachXmlFile::publishWay(sensor_msgs::NavSatFix cur_gps,QList<MapSearchNod
             way_msgs.task_area = "normal_area";     //lsh//6:出正负障碍检测
             break;
         case 7:
-            way_msgs.task_area = "normal_area";//lsh//若cur_road_type为7则说明执行过搜索任务，属于普通区域
+            way_msgs.task_area = "search_area";//lsh//若cur_road_type为7则说明执行过搜索任务，属于普通区域
             break;
         default:
             ROS_WARN("task type error!, the cur_road _type is %d",cur_road_type);
@@ -5570,7 +5716,7 @@ void AttachXmlFile::CreatOutRoad(){
                 }
                 parent_node -> intersection = true;
                 parent_node -> road_count++;
-                //lsh//找到最近的父节点
+                //lsh//找到最近的母节点
                 MapSearchNode* new_node = new MapSearchNode;
                 new_node->lon = taskIter->lon;
                 new_node->lat = taskIter->lat;

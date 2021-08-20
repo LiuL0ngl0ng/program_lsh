@@ -47,14 +47,11 @@ PubMsg::PubMsg(int argc, char **argv) ://lsh//冒号后面大括号之前的内�
     ros::NodeHandle private_nh_("~");
     //lsh//命名空间为launch文件中定义的“命名空间”/ “节点名” ，其用于读取参数
     // add ros communications
-
-    private_nh_.param<std::string>("gps_topic_path",input_gps_topic,"/gpsdata");//lll
-    //input_gps_topic = private_nh_.param<std::string>("gps_topic_path", "/gpsdata");
-    std::cout << "ROS NODE INIT!, gps_topic: " << input_gps_topic << std::endl;//lll
-
+    private_nh_.param<std::string>("gps_topic",input_gps_topic,"/gpsdata");
     vehicle_state_sub = n.subscribe(input_gps_topic, 1, &PubMsg::vehicleStateCb, this);
     vehicle_vrep_state_sub = n.subscribe("/vehicle_state", 1, &PubMsg::vehicleVrepStateCb, this);///lsh///Vrep仿真车辆位资话题订阅
     semantic_sub = n.subscribe("/replanning_topic", 1, &PubMsg::ReplanningStateCb, this);///lsh///重规划话题订阅
+    search_plan_sub=n.subscribe("/search_plan_end",1,&PubMsg::SearchStateCb,this);
 
     traj_sub_ = n.subscribe("global_path/traj_plan", 1, &PubMsg::trajectoryCb, this);
     intersection_sub = n.subscribe("/crossroadtopic", 1, &PubMsg::IsIntersection, this);
@@ -66,8 +63,9 @@ PubMsg::PubMsg(int argc, char **argv) ://lsh//冒号后面大括号之前的内�
     global_way_pub = n.advertise<lanelet_map_msgs::Way>("/global_path", 1);
     not_move_pub = n.advertise<std_msgs::UInt8>("/replanning_not_move",1);
     weapon_pub = n.advertise<three_one_msgs::ControlWeapon>("/weapon",1);
+
     //    vertical_wall_sub_ = n.subscribe("/vertical_wall_topic",1,&PubMsg::vertical_wall_cb,this);
-    //    ditch_sub_ = n.subscribe("ditch_detection",1,&PubMsg::ditch_cb,this);
+//    ditch_sub_ = n.subscribe("ditch_detection",1,&PubMsg::ditch_cb,this);
     gps_sub_ = n.subscribe("/GPSmsg", 1, &PubMsg::gpsStateCb, this);
     search_stop_sub_ = n.subscribe("/search_plan_end", 1, &PubMsg::searchStop, this);
     vel_sub_ = n.subscribe("ecudatareport", 1, &PubMsg::callbackEcuDataReport, this);
@@ -99,7 +97,8 @@ PubMsg::PubMsg(int argc, char **argv) ://lsh//冒号后面大括号之前的内�
     use_bspline = private_nh_.param("use_bspline",true);//是否使用样条插值，当false，则使用线性插值
     private_nh_.param<std::string>("way_net_file_path",way_net_file_path,"/xml_director/default");//lsh//从config文件中读取路网文件读取路径
     private_nh_.param<std::string>("task_file_path",input_task_file_path,"/taskfile/default.txt");//lsh//从config文件中读取任务文件读取路径
-
+    
+    std::cout << "GPS is subscribed from: " << input_gps_topic << std::endl;
     //connect(this,SIGNAL(finished()),this,SLOT(deleteLater()));
     std::cout << "ROS NODE INIT!, base_dir: " << base_dir << std::endl;
 }
@@ -284,6 +283,7 @@ void PubMsg::vehicleStateCb(const sensor_driver_msgs::GpswithHeading &gps) {
     }
 }
 ///lsh///Vrep车辆状态订阅回调函数
+
 void PubMsg::vehicleVrepStateCb(const anm_msgs::VehicleState &vehicle_data_vrep){
     if(run_param.vrep_simulate == true) {
         {
@@ -333,6 +333,10 @@ void PubMsg::ReplanningStateCb(const std_msgs::UInt8 &semantic_replanning_signal
     }
 }
 
+void PubMsg::SearchStateCb(const std_msgs::UInt8 &search_end_flag){
+    if_search_end = search_end_flag.data;
+}
+
 void PubMsg::vertical_wall_cb(const vertical_wall_grid::vertical_wall_grid &detectData) {
     //lsh//垂直墙处理（此处未使用）
     if(detectData.detected){
@@ -365,7 +369,7 @@ void PubMsg::gpsStateCb(const sensor_driver_msgs::GpswithHeading &gps) {
 void PubMsg::IsIntersection(const extractroad_msg::extractroad &inter_data) {
     {//lsh//接收并保存岔道口数据
         QMutexLocker locker(&this->mutex_is_rcv_intersec);
-        is_rcv_intersec = true;//lsh//是否接收到了岔道口数据,不使用
+        is_rcv_intersec = true;//lsh//是否接收到了岔道口数据
         rcv_cross_road = true;//lsh//接收到岔道口数据
     }
     {
@@ -437,7 +441,6 @@ void PubMsg::trajectoryCb(const plan2control_msgs::Trajectory &traj) {
                 this->empty_traj_count_ = 0;
             }*/
             //lsh//搜索区清零
-            /*//LLL注释
             if (path_planner_->way_msgs.task_area == "hidden_area"
                 || wait_for_search) {//lsh//wait_for_search等待搜索控制位
                 wait_for_search = true;
@@ -448,7 +451,7 @@ void PubMsg::trajectoryCb(const plan2control_msgs::Trajectory &traj) {
                     std::cout << "In hidden area, clear empty_traj_count_." << std::endl;
                 }
                 this->empty_traj_count_ = 0;
-            }*/
+            }
             //lsh//停车区清零
             if (path_planner_->way_msgs.task_area == "park_area") {
                 if (empty_traj_count_ > 0) {
@@ -456,13 +459,13 @@ void PubMsg::trajectoryCb(const plan2control_msgs::Trajectory &traj) {
                 }
                 this->empty_traj_count_ = 0;
             }
-            //lsh//搜索区清零
+            /*//lsh//搜索区清零
             if (path_planner_->way_msgs.task_area == "search_area") {
                 if (empty_traj_count_ > 0) {
                     std::cout << "In search area, clear empty_traj_count_." << std::endl;
                 }
                 this->empty_traj_count_ = 0;
-            }
+            }*/
             //lsh//武器站清零
             if (weapon_contorl) {
                 if (empty_traj_count_ > 0) {
